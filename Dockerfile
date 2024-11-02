@@ -10,7 +10,12 @@ RUN apt-get update && apt-get install -y \
     pkg-config \
     default-libmysqlclient-dev \
     gcc \
+    wget \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Download and install Cloud SQL Auth Proxy
+RUN wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O /cloud_sql_proxy \
+    && chmod +x /cloud_sql_proxy
 
 # Copy requirements.txt and install dependencies
 COPY requirements.txt .
@@ -28,5 +33,9 @@ EXPOSE 8080
 # Set the environment variable for Django settings
 ENV DJANGO_SETTINGS_MODULE=Earls_Discount_System.settings
 
-# Run the Django development server
-CMD ["sh", "-c", "cd Earls_Discount_System && python manage.py migrate && python manage.py collectstatic --noinput && gunicorn --bind 0.0.0.0:$PORT Earls_Discount_System.wsgi:application"]
+# Start Cloud SQL Auth Proxy and Gunicorn for Django
+CMD /cloud_sql_proxy -instances=bcit-ec:us-west1:card-issuer=tcp:3306 & \
+    gunicorn --bind 0.0.0.0:$PORT Earls_Discount_System.wsgi:application
+    
+# # Run the Django development server
+# CMD ["sh", "-c", "cd Earls_Discount_System && python manage.py migrate && python manage.py collectstatic --noinput && gunicorn --bind 0.0.0.0:$PORT Earls_Discount_System.wsgi:application"]
