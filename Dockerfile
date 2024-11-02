@@ -34,8 +34,8 @@ EXPOSE 8080
 ENV DJANGO_SETTINGS_MODULE=Earls_Discount_System.settings
 
 # Start Cloud SQL Auth Proxy and Gunicorn for Django
-# CMD /cloud_sql_proxy -instances=bcit-ec:us-west1:card-issuer=tcp:3306 & \
-#     gunicorn --bind 0.0.0.0:$PORT Earls_Discount_System.wsgi:application
+CMD /cloud_sql_proxy -instances=bcit-ec:us-west1:card-issuer=tcp:3306 & \
+    cd Earls_Discount_System && gunicorn --bind 0.0.0.0:$PORT Earls_Discount_System.wsgi:application
     
 # Run the Django development server
-CMD ["sh", "-c", "/cloud_sql_proxy -instances=bcit-ec:us-west1:card-issuer=tcp:3306 & cd Earls_Discount_System && python manage.py migrate && python manage.py collectstatic --noinput && gunicorn --bind 0.0.0.0:$PORT Earls_Discount_System.wsgi:application"]
+# CMD ["sh", "-c", "/cloud_sql_proxy -instances=bcit-ec:us-west1:card-issuer=tcp:3306 & cd Earls_Discount_System && python manage.py migrate && python manage.py collectstatic --noinput && gunicorn --bind 0.0.0.0:$PORT Earls_Discount_System.wsgi:application"]
