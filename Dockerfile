@@ -5,7 +5,12 @@ FROM python:3.10-slim
 WORKDIR /app/Earls_Discount_System/Earls_Discount_System
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y build-essential  && apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    pkg-config \
+    default-libmysqlclient-dev \
+    gcc \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements.txt and install dependencies
 COPY requirements.txt .
